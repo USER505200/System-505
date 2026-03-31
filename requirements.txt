@@ -4,4 +4,4 @@ aiosqlite
 aiohttp==3.9.0
 multidict==6.7.1
 yarl==1.23.0
-frozenlist==1.4.0
+frozenlist==1.4.1
