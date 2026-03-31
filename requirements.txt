@@ -2,6 +2,6 @@ py-cord>=2.5.0,<3.0.0
 python-dotenv
 aiosqlite
 aiohttp==3.9.0
-multidict==6.0.4
-yarl==1.9.2
+multidict==6.7.1
+yarl==1.23.0
 frozenlist==1.4.0
