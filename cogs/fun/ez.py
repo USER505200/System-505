@@ -68,5 +68,5 @@ class EZ(commands.Cog):
         except asyncio.TimeoutError:
             await send_and_delete(ctx, error_embed("Cancelled", "Command cancelled. No confirmation received."))
 
-def setup(bot):
-    bot.add_cog(EZ(bot))
+async def setup(bot):
+    await bot.add_cog(EZ(bot))

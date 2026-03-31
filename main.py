@@ -13,7 +13,64 @@ intents.message_content = True
 intents.voice_states = True
 
 # ========== تعريف البوت ==========
-bot = commands.Bot(command_prefix=config.PREFIX, intents=intents)
+class MyBot(commands.Bot):
+    async def setup_hook(self):
+        # Initialize database and load cogs before on_ready
+        await db.init_db()
+        print("💾 Database initialized")
+
+        cogs_list = [
+            "cogs.moderation.ban",
+            "cogs.moderation.kick",
+            "cogs.moderation.mute",
+            "cogs.moderation.unmute",
+            "cogs.moderation.clear",
+            "cogs.moderation.clearuser",
+            "cogs.moderation.timeout",
+            "cogs.moderation.ipban",
+            "cogs.moderation.hwidban",
+            "cogs.moderation.unban",
+            "cogs.warns.warn",
+            "cogs.warns.checkwarn",
+            "cogs.warns.removewarn",
+            "cogs.warns.resetwarn",
+            "cogs.jail.jail",
+            "cogs.jail.unjail",
+            "cogs.jail.saveroles",
+            "cogs.jail.restoreroles",
+            "cogs.protection.lock",
+            "cogs.protection.unlock",
+            "cogs.protection.lockdown",
+            "cogs.protection.unlockdown",
+            "cogs.protection.block",
+            "cogs.protection.unblock",
+            "cogs.protection.addrole",
+            "cogs.protection.removerole",
+            "cogs.fun.marry",
+            "cogs.fun.divorce",
+            "cogs.fun.goodnight",
+            "cogs.fun.ez",
+            "cogs.fun.setgif",
+            "cogs.utility.avatar",
+            "cogs.utility.banner",
+            "cogs.utility.userinfo",
+            "cogs.utility.serverinfo",
+            "cogs.utility.roleinfo",
+            "cogs.utility.botinfo",
+            "cogs.utility.nickname",
+            "cogs.utility.help",
+            "cogs.tempvoice.tempvoice",
+        ]
+
+        for cog in cogs_list:
+            try:
+                await self.load_extension(cog)
+                print(f"📦 Loaded: {cog}")
+            except Exception as e:
+                print(f"❌ Failed to load {cog}: {e}")
+
+
+bot = MyBot(command_prefix=config.PREFIX, intents=intents)
 
 # ========== نظام الريبلاي بدون بريفكس ==========
 @bot.event
@@ -118,61 +175,6 @@ async def on_ready():
     print(f"✅ Bot is ready!")
     print(f"📡 Logged in as {bot.user.name}")
     print(f"🔗 Connected to {len(bot.guilds)} servers")
-    
-    await db.init_db()
-    print("💾 Database initialized")
-    
-    # تحميل جميع الـ Cogs
-    cogs_list = [
-        "cogs.moderation.ban",
-        "cogs.moderation.kick",
-        "cogs.moderation.mute",
-        "cogs.moderation.unmute",
-        "cogs.moderation.clear",
-        "cogs.moderation.clearuser",
-        "cogs.moderation.timeout",
-        "cogs.moderation.ipban",
-        "cogs.moderation.hwidban",
-        "cogs.moderation.unban",
-        "cogs.warns.warn",
-        "cogs.warns.checkwarn",
-        "cogs.warns.removewarn",
-        "cogs.warns.resetwarn",
-        "cogs.jail.jail",
-        "cogs.jail.unjail",
-        "cogs.jail.saveroles",
-        "cogs.jail.restoreroles",
-        "cogs.protection.lock",
-        "cogs.protection.unlock",
-        "cogs.protection.lockdown",
-        "cogs.protection.unlockdown",
-        "cogs.protection.block",
-        "cogs.protection.unblock",
-        "cogs.protection.addrole",
-        "cogs.protection.removerole",
-        "cogs.fun.marry",
-        "cogs.fun.divorce",
-        "cogs.fun.goodnight",
-        "cogs.fun.ez",
-        "cogs.fun.setgif",
-        "cogs.utility.avatar",
-        "cogs.utility.banner",
-        "cogs.utility.userinfo",
-        "cogs.utility.serverinfo",
-        "cogs.utility.roleinfo",
-        "cogs.utility.botinfo",
-        "cogs.utility.nickname",
-        "cogs.utility.help",
-        "cogs.tempvoice.tempvoice",
-    ]
-    
-    for cog in cogs_list:
-        try:
-            bot.load_extension(cog)
-            print(f"📦 Loaded: {cog}")
-        except Exception as e:
-            print(f"❌ Failed to load {cog}: {e}")
-    
     print("🎉 Bot is fully ready!")
 
 @bot.event

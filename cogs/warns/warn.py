@@ -14,7 +14,6 @@ class Warn(commands.Cog):
     
     @commands.command(name="warn", aliases=["w", "تحذير", "ت"])
     @commands.has_permissions(kick_members=True)
-    @check_permission("warn")
     async def warn(self, ctx, *, user_input=None):
         """إضافة تحذير - !warn @user [reason]"""
         
@@ -97,5 +96,5 @@ class Warn(commands.Cog):
             except Exception as e:
                 print(f"Timeout failed: {e}")
 
-def setup(bot):
-    bot.add_cog(Warn(bot))
+async def setup(bot):
+    await bot.add_cog(Warn(bot))

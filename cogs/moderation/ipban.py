@@ -82,5 +82,5 @@ class IPBan(commands.Cog):
         except Exception as e:
             await send_and_delete(ctx, error_embed("Ban Failed", f"Could not ban user. Error: {str(e)}"))
 
-def setup(bot):
-    bot.add_cog(IPBan(bot))
+async def setup(bot):
+    await bot.add_cog(IPBan(bot))

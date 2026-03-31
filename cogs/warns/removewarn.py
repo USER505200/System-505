@@ -12,7 +12,6 @@ class RemoveWarn(commands.Cog):
     
     @commands.command(name="removewarn", aliases=["rw1", "مسح_تحذير_واحد"])
     @commands.has_permissions(kick_members=True)
-    @check_permission("removewarn")
     async def removewarn(self, ctx, *, user_input=None):
         """حذف تحذير - !removewarn @user [warn_id] أو ريبلاي"""
         
@@ -62,5 +61,5 @@ class RemoveWarn(commands.Cog):
             f"Removed warning #{warn_id} for {member.mention}.\nNow has {new_count} warnings."
         ))
 
-def setup(bot):
-    bot.add_cog(RemoveWarn(bot))
+async def setup(bot):
+    await bot.add_cog(RemoveWarn(bot))

@@ -12,7 +12,7 @@ class Lockdown(commands.Cog):
     
     @commands.command(name="lockdown", aliases=["غلق"])
     @commands.has_permissions(administrator=True)
-    @check_permission("lockdown")
+
     async def lockdown(self, ctx):
         """غلق السيرفر بالكامل - !lockdown"""
         
@@ -41,5 +41,5 @@ class Lockdown(commands.Cog):
         )
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Lockdown(bot))
+async def setup(bot):
+    await bot.add_cog(Lockdown(bot))

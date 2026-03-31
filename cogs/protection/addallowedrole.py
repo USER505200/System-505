@@ -12,7 +12,6 @@ class AddAllowedRole(commands.Cog):
     
     @commands.command(name="addallowedrole", aliases=["add", "اضف_رتبة"])
     @commands.has_permissions(administrator=True)
-    @check_permission("addallowedrole")
     async def addallowedrole(self, ctx, role_input=None):
         """إضافة رتبة مسموح لها باستخدام الأوامر - !add @role"""
         
@@ -40,5 +39,5 @@ class AddAllowedRole(commands.Cog):
         )
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(AddAllowedRole(bot))
+async def setup(bot):
+    await bot.add_cog(AddAllowedRole(bot))

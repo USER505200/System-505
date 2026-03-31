@@ -11,7 +11,6 @@ class Lock(commands.Cog):
     
     @commands.command(name="lock", aliases=["قفل"])
     @commands.has_permissions(administrator=True)
-    @check_permission("lock")
     async def lock(self, ctx, channel: discord.TextChannel = None):
         """قفل روم معين - !lock #channel"""
         
@@ -29,5 +28,5 @@ class Lock(commands.Cog):
         )
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Lock(bot))
+async def setup(bot):
+    await bot.add_cog(Lock(bot))

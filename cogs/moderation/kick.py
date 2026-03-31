@@ -44,5 +44,5 @@ class Kick(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "I don't have permission to kick that user."))
 
-def setup(bot):
-    bot.add_cog(Kick(bot))
+async def setup(bot):
+    await bot.add_cog(Kick(bot))

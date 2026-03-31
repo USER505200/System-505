@@ -44,5 +44,5 @@ class Goodnight(commands.Cog):
         
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Goodnight(bot))
+async def setup(bot):
+    await bot.add_cog(Goodnight(bot))

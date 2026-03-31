@@ -33,5 +33,5 @@ class Banner(commands.Cog):
         else:
             await send_permanent(ctx, error_embed("No Banner", f"{member.mention} doesn't have a banner."))
 
-def setup(bot):
-    bot.add_cog(Banner(bot))
+async def setup(bot):
+    await bot.add_cog(Banner(bot))

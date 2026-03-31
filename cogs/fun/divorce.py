@@ -33,5 +33,5 @@ class Divorce(commands.Cog):
         )
         await send_permanent(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Divorce(bot))
+async def setup(bot):
+    await bot.add_cog(Divorce(bot))

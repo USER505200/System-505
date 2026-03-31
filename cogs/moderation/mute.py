@@ -51,5 +51,5 @@ class Mute(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "I don't have permission to mute that user."))
 
-def setup(bot):
-    bot.add_cog(Mute(bot))
+async def setup(bot):
+    await bot.add_cog(Mute(bot))

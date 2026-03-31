@@ -32,5 +32,5 @@ class BotInfo(commands.Cog):
         
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(BotInfo(bot))
+async def setup(bot):
+    await bot.add_cog(BotInfo(bot))

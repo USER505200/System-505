@@ -11,7 +11,7 @@ class RemoveRole(commands.Cog):
     
     @commands.command(name="removerole", aliases=["rr", "شيل_رول"])
     @commands.has_permissions(manage_roles=True)
-    @check_permission("removerole")
+
     async def removerole(self, ctx, role_input=None, *, user_input=None):
         """إزالة رتبة من عضو - !removerole @role @user أو ريبلاي"""
         
@@ -50,5 +50,5 @@ class RemoveRole(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "I don't have permission to remove that role."))
 
-def setup(bot):
-    bot.add_cog(RemoveRole(bot))
+async def setup(bot):
+    await bot.add_cog(RemoveRole(bot))

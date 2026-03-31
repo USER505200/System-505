@@ -47,5 +47,5 @@ class Unmute(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "I don't have permission to unmute that user."))
 
-def setup(bot):
-    bot.add_cog(Unmute(bot))
+async def setup(bot):
+    await bot.add_cog(Unmute(bot))

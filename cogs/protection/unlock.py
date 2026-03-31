@@ -11,7 +11,6 @@ class Unlock(commands.Cog):
     
     @commands.command(name="unlock", aliases=["فتح"])
     @commands.has_permissions(administrator=True)
-    @check_permission("unlock")
     async def unlock(self, ctx, channel: discord.TextChannel = None):
         """فتح روم معين - !unlock #channel"""
         
@@ -29,5 +28,5 @@ class Unlock(commands.Cog):
         )
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Unlock(bot))
+async def setup(bot):
+    await bot.add_cog(Unlock(bot))

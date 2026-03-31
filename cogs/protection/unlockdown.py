@@ -11,7 +11,7 @@ class Unlockdown(commands.Cog):
     
     @commands.command(name="unlockdown", aliases=["فتح_السيرفر"])
     @commands.has_permissions(administrator=True)
-    @check_permission("unlockdown")
+
     async def unlockdown(self, ctx):
         """فتح السيرفر بعد القفل - !unlockdown"""
         
@@ -41,5 +41,5 @@ class Unlockdown(commands.Cog):
         )
         await send_and_delete(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Unlockdown(bot))
+async def setup(bot):
+    await bot.add_cog(Unlockdown(bot))

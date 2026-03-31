@@ -108,5 +108,5 @@ class Help(commands.Cog):
         embed.set_footer(text="Type !help <command> for more details | Prefix: !")
         await send_permanent(ctx, embed)
 
-def setup(bot):
-    bot.add_cog(Help(bot))
+async def setup(bot):
+    await bot.add_cog(Help(bot))
