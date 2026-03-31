@@ -34,5 +34,5 @@ class ResetWarn(commands.Cog):
             f"Cleared all {warns_count} warnings for {member.mention}."
         ))
 
-async def setup(bot):
-    await bot.add_cog(ResetWarn(bot))
+def setup(bot):
+    bot.add_cog(ResetWarn(bot))

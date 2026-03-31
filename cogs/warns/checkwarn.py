@@ -66,5 +66,5 @@ class CheckWarn(commands.Cog):
         
         await send_and_delete(ctx, embed)
 
-async def setup(bot):
-    await bot.add_cog(CheckWarn(bot))
+def setup(bot):
+    bot.add_cog(CheckWarn(bot))

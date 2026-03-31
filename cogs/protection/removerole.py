@@ -50,5 +50,5 @@ class RemoveRole(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "I don't have permission to remove that role."))
 
-async def setup(bot):
-    await bot.add_cog(RemoveRole(bot))
+def setup(bot):
+    bot.add_cog(RemoveRole(bot))

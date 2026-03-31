@@ -92,5 +92,5 @@ class Nickname(commands.Cog):
         except:
             return None
 
-async def setup(bot):
-    await bot.add_cog(Nickname(bot))
+def setup(bot):
+    bot.add_cog(Nickname(bot))

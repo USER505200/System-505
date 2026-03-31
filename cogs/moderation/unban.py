@@ -60,5 +60,5 @@ class Unban(commands.Cog):
         except Exception as e:
             await send_and_delete(ctx, error_embed("Unban Failed", f"Could not unban user. Error: {str(e)}"))
 
-async def setup(bot):
-    await bot.add_cog(Unban(bot))
+def setup(bot):
+    bot.add_cog(Unban(bot))

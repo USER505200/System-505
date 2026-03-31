@@ -62,5 +62,5 @@ class RemoveWarn(commands.Cog):
             f"Removed warning #{warn_id} for {member.mention}.\nNow has {new_count} warnings."
         ))
 
-async def setup(bot):
-    await bot.add_cog(RemoveWarn(bot))
+def setup(bot):
+    bot.add_cog(RemoveWarn(bot))

@@ -168,7 +168,7 @@ async def on_ready():
     
     for cog in cogs_list:
         try:
-            await bot.load_extension(cog)
+            bot.load_extension(cog)
             print(f"📦 Loaded: {cog}")
         except Exception as e:
             print(f"❌ Failed to load {cog}: {e}")
