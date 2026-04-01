@@ -12,7 +12,7 @@ class Lockdown(commands.Cog):
     
     @commands.command(name="lockdown", aliases=["غلق"])
     @commands.has_permissions(administrator=True)
-
+    @check_permission("lockdown")
     async def lockdown(self, ctx):
         """غلق السيرفر بالكامل - !lockdown"""
         

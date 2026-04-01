@@ -11,7 +11,7 @@ class Unlockdown(commands.Cog):
     
     @commands.command(name="unlockdown", aliases=["فتح_السيرفر"])
     @commands.has_permissions(administrator=True)
-
+    @check_permission("unlockdown")
     async def unlockdown(self, ctx):
         """فتح السيرفر بعد القفل - !unlockdown"""
         

@@ -11,6 +11,7 @@ class Lock(commands.Cog):
     
     @commands.command(name="lock", aliases=["قفل"])
     @commands.has_permissions(administrator=True)
+    @check_permission("lock")
     async def lock(self, ctx, channel: discord.TextChannel = None):
         """قفل روم معين - !lock #channel"""
         

@@ -11,6 +11,7 @@ class AddRole(commands.Cog):
     
     @commands.command(name="addrole", aliases=["ar", "رول"])
     @commands.has_permissions(manage_roles=True)
+    @check_permission("addrole")
     async def addrole(self, ctx, role_input=None, *, user_input=None):
         """إضافة رتبة لعضو - !addrole @role @user أو ريبلاي"""
         

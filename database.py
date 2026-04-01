@@ -82,11 +82,31 @@ async def init_db():
             )
         ''')
         
-        # ========== جدول Temp Voice Settings (مهم جداً) ==========
+        # جدول Temp Voice Settings
         await db.execute('''
             CREATE TABLE IF NOT EXISTS temp_voice_settings (
                 guild_id TEXT PRIMARY KEY,
                 channel_id TEXT NOT NULL
+            )
+        ''')
+        
+        # جدول إعدادات التذاكر
+        await db.execute('''
+            CREATE TABLE IF NOT EXISTS ticket_settings (
+                guild_id TEXT PRIMARY KEY,
+                category_id TEXT,
+                logs_channel_id TEXT,
+                staff_role_id TEXT
+            )
+        ''')
+        
+        # ========== جدول Lines Channels ==========
+        await db.execute('''
+            CREATE TABLE IF NOT EXISTS lines_channels (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                guild_id TEXT NOT NULL,
+                channel_id TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         
@@ -309,3 +329,92 @@ async def get_temp_voice_channel(guild_id: int):
         ''', (str(guild_id),)) as cursor:
             result = await cursor.fetchone()
             return result[0] if result else None
+
+# ========== دوال التذاكر ==========
+
+async def set_ticket_category(guild_id: int, category_id: int):
+    """تعيين كاتيجوري التذاكر"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT OR REPLACE INTO ticket_settings (guild_id, category_id)
+            VALUES (?, ?)
+        ''', (str(guild_id), str(category_id)))
+        await db.commit()
+
+async def set_ticket_logs(guild_id: int, channel_id: int):
+    """تعيين روم اللوجات"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE ticket_settings SET logs_channel_id = ? WHERE guild_id = ?
+        ''', (str(channel_id), str(guild_id)))
+        await db.commit()
+
+async def set_ticket_staff_role(guild_id: int, role_id: int):
+    """تعيين رتبة الإدارة"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE ticket_settings SET staff_role_id = ? WHERE guild_id = ?
+        ''', (str(role_id), str(guild_id)))
+        await db.commit()
+
+async def get_ticket_category(guild_id: int):
+    """جلب كاتيجوري التذاكر"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT category_id FROM ticket_settings WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+
+async def get_ticket_logs(guild_id: int):
+    """جلب روم اللوجات"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT logs_channel_id FROM ticket_settings WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+
+async def get_ticket_staff_role(guild_id: int):
+    """جلب رتبة الإدارة"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT staff_role_id FROM ticket_settings WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+
+# ========== دوال Lines ==========
+
+async def add_line_channel(guild_id: int, channel_id: int):
+    """إضافة قناة لنظام Lines"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT INTO lines_channels (guild_id, channel_id)
+            VALUES (?, ?)
+        ''', (str(guild_id), str(channel_id)))
+        await db.commit()
+
+async def remove_line_channel(guild_id: int, channel_id: int):
+    """إزالة قناة من نظام Lines"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            DELETE FROM lines_channels WHERE guild_id = ? AND channel_id = ?
+        ''', (str(guild_id), str(channel_id)))
+        await db.commit()
+
+async def get_line_channels(guild_id: int):
+    """جلب جميع قنوات Lines في السيرفر"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT channel_id FROM lines_channels WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            return [row[0] for row in await cursor.fetchall()]
+
+async def clear_line_channels(guild_id: int):
+    """مسح جميع قنوات Lines في السيرفر"""
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            DELETE FROM lines_channels WHERE guild_id = ?
+        ''', (str(guild_id),))
+        await db.commit()

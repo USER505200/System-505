@@ -61,6 +61,11 @@ COMMAND_PERMISSIONS = {
     "help": {"allowed_roles": []}, "timeout": {"allowed_roles": ["admin_only"]},
     "ipban": {"allowed_roles": ["admin_only"]}, "hwidban": {"allowed_roles": ["admin_only"]},
     "unban": {"allowed_roles": ["admin_only"]},
+    "come": {"allowed_roles": ["admin_only"], "description": "إرسال دعوة لمستخدم مع رسالة مخصصة"},
+    "line": {"allowed_roles": ["admin_only"], "description": "إضافة قناة لنظام Lines"},
+    "lines": {"allowed_roles": ["admin_only"], "description": "عرض جميع قنوات Lines"},
+    "removeline": {"allowed_roles": ["admin_only"], "description": "إزالة قناة من نظام Lines"},
+    "clearlines": {"allowed_roles": ["admin_only"], "description": "مسح جميع قنوات Lines"},
 }
 
 def get_command_permission(command_name: str) -> list:

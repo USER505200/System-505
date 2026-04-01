@@ -29,6 +29,7 @@ class Ban(commands.Cog):
     
     @commands.command(name="ban", aliases=["b", "حظر"])
     @commands.has_permissions(ban_members=True)
+    @check_permission("ban")
     async def ban(self, ctx, *, user_input=None):
         member = await self.get_member(ctx, user_input)
         if not member:

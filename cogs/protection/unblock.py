@@ -12,7 +12,7 @@ class Unblock(commands.Cog):
     
     @commands.command(name="unblock", aliases=["الغاء_حظر_بوت"])
     @commands.has_permissions(administrator=True)
-
+    @check_permission("unblock")
     async def unblock(self, ctx, *, user_input=None):
         """إلغاء حظر مستخدم من البوت - !unblock @user أو ريبلاي"""
         

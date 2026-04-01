@@ -65,7 +65,10 @@ class Help(commands.Cog):
             ("🛡️ Protection", ["lock/قفل", "unlock/فتح", "lockdown/غلق", "unlockdown/فتح_السيرفر", "block/حظر_بوت", "unblock/الغاء_حظر"]),
             ("👑 Role", ["addrole/ar/رول", "removerole/rr/شيل_رول", "addallowedrole/add/اضف_رتبة", "removeallowedrole/remove/شيل_رتبة"]),
             ("🔨 Advanced Ban", ["ban/b/حظر", "ipban/banip/حظر_ايبي", "hwidban/banhwid/حظر_هردوير", "unban/ub/فك_حظر"]),
+            ("📡 Lines System", ["line #channel", "lines", "removeline #channel", "clearlines"]),
             ("🎙️ Temp Voice", ["temp set <channel>", "temp remove", "temp info", "panel #channel"]),
+            ("🎫 Tickets", ["ticket setup", "ticket panel #channel", "ticket logs #channel", "ticket staff @role", "ticket category <id>"]),
+            ("🔔 Come", ["come @user <message>", "تعال @user <message>"]),
             ("💍 Marriage", ["marry/ارتبط", "divorce/طلاق"]),
             ("🎭 Fun", ["goodnight/gn/تصبح_على_خير", "ez/ارزع", "setgif/تعيين_جيف"]),
             ("ℹ️ Info", ["avatar/a/صورتي", "banner/bu/بنر", "userinfo/ui/معلومات_عضو", "serverinfo/si/معلومات_سيرفر", "roleinfo/ri/معلومات_رتبة", "botinfo/bi/معلومات_بوت", "nickname/nick/n/اسم"]),
@@ -102,6 +105,43 @@ class Help(commands.Cog):
                   "2. الشخص المستهدف يضغط **Accept** أو **Reject**\n"
                   "3. بعد القبول، يتم الزواج فوراً\n\n"
                   "**للطلاق:** `!divorce`",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="📡 Lines System",
+            value="**الأوامر:**\n"
+                  "• `!line #channel` - إضافة قناة\n"
+                  "• `!lines` - عرض القنوات\n"
+                  "• `!removeline #channel` - إزالة قناة\n"
+                  "• `!clearlines` - مسح كل القنوات\n\n"
+                  "**كيف يعمل:**\n"
+                  "أي رسالة في القنوات المضافة → يبعت صورة ثابتة لباقي القنوات",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="🎫 Ticket System",
+            value="**الإعداد:**\n"
+                  "1. `!ticket setup` - إعداد النظام\n"
+                  "2. `!ticket staff @role` - تعيين رتبة الإدارة\n"
+                  "3. `!ticket logs #channel` - تعيين روم اللوجات\n"
+                  "4. `!ticket category <id>` - تعيين كاتيجوري\n"
+                  "5. `!ticket panel #channel` - إرسال لوحة التذاكر\n\n"
+                  "**المميزات:**\n"
+                  "• 6 أنواع تذاكر\n"
+                  "• أزرار Accept, Close, Invite\n"
+                  "• Transcript وتقييم بعد الإغلاق",
+            inline=False
+        )
+        
+        embed.add_field(
+            name="🔔 Come Command",
+            value="**الاستخدام:**\n"
+                  "• `!come @user رسالتك` - إرسال دعوة\n"
+                  "• بالريبلاي: ارد على رسالة الشخص واكتب `!come رسالتك`\n\n"
+                  "**النتيجة:**\n"
+                  "المستخدم يستقبل رسالة خاصة تحتوي الرسالة والروم",
             inline=False
         )
         

@@ -11,7 +11,7 @@ class RemoveRole(commands.Cog):
     
     @commands.command(name="removerole", aliases=["rr", "شيل_رول"])
     @commands.has_permissions(manage_roles=True)
-
+    @check_permission("removerole")
     async def removerole(self, ctx, role_input=None, *, user_input=None):
         """إزالة رتبة من عضو - !removerole @role @user أو ريبلاي"""
         

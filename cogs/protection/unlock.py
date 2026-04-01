@@ -11,6 +11,7 @@ class Unlock(commands.Cog):
     
     @commands.command(name="unlock", aliases=["فتح"])
     @commands.has_permissions(administrator=True)
+    @check_permission("unlock")
     async def unlock(self, ctx, channel: discord.TextChannel = None):
         """فتح روم معين - !unlock #channel"""
         

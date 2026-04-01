@@ -12,6 +12,7 @@ class RemoveAllowedRole(commands.Cog):
     
     @commands.command(name="removeallowedrole", aliases=["remove", "شيل_رتبة"])
     @commands.has_permissions(administrator=True)
+    @check_permission("removeallowedrole")
     async def removeallowedrole(self, ctx, role_input=None):
         """إزالة رتبة من الصلاحيات - !remove @role"""
         

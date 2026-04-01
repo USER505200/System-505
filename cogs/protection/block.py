@@ -12,6 +12,7 @@ class Block(commands.Cog):
     
     @commands.command(name="block", aliases=["حظر_بوت"])
     @commands.has_permissions(administrator=True)
+    @check_permission("block")
     async def block(self, ctx, *, user_input=None):
         """حظر مستخدم من استخدام البوت - !block @user أو ريبلاي"""
         

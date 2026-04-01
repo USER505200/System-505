@@ -12,6 +12,7 @@ class ResetWarn(commands.Cog):
     
     @commands.command(name="resetwarn", aliases=["rw", "مسح_كل_التحذيرات"])
     @commands.has_permissions(administrator=True)
+    @check_permission("resetwarn")
     async def resetwarn(self, ctx, *, user_input=None):
         """مسح كل التحذيرات - !resetwarn @user أو ريبلاي"""
         
