@@ -52,5 +52,7 @@ class Ban(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "Can't ban that user."))
 
-async def setup(bot):
-    await bot.add_cog(Ban(bot))
+def setup(bot):
+    cog = Ban(bot)
+    bot.add_cog(cog)
+    return cog

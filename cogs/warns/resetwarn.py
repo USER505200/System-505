@@ -35,4 +35,4 @@ class ResetWarn(commands.Cog):
         ))
 
 async def setup(bot):
-    await bot.add_cog(ResetWarn(bot))
+    bot.add_cog(ResetWarn(bot))

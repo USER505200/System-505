@@ -66,4 +66,4 @@ class Unjail(commands.Cog):
             await send_and_delete(ctx, error_embed("Unjail Failed", f"Could not unjail {member.mention}. Error: {str(e)}"))
 
 async def setup(bot):
-    await bot.add_cog(Unjail(bot))
+    bot.add_cog(Unjail(bot))

@@ -147,4 +147,4 @@ class Jail(commands.Cog):
             pass
 
 async def setup(bot):
-    await bot.add_cog(Jail(bot))
+    bot.add_cog(Jail(bot))

@@ -46,4 +46,4 @@ class RestoreRoles(commands.Cog):
             await send_and_delete(ctx, error_embed("Restore Failed", f"Could not restore roles. Error: {str(e)}"))
 
 async def setup(bot):
-    await bot.add_cog(RestoreRoles(bot))
+    bot.add_cog(RestoreRoles(bot))

@@ -100,5 +100,7 @@ class Timeout(commands.Cog):
         except Exception as e:
             await send_and_delete(ctx, error_embed("Error", f"Could not timeout user. Error: {str(e)}"))
 
-async def setup(bot):
-    await bot.add_cog(Timeout(bot))
+def setup(bot):
+    cog = Timeout(bot)
+    bot.add_cog(cog)
+    return cog

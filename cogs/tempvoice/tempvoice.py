@@ -490,4 +490,4 @@ class TempVoice(commands.Cog):
         await ctx.send(f"✅ Control panel sent to {channel.mention}", delete_after=5)
 
 async def setup(bot):
-    await bot.add_cog(TempVoice(bot))
+    bot.add_cog(TempVoice(bot))

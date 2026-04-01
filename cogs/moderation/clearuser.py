@@ -63,4 +63,4 @@ class ClearUser(commands.Cog):
             await send_and_delete(ctx, error_embed("Permission Error", f"I don't have permission to delete messages. Error: {str(e)}"))
 
 async def setup(bot):
-    await bot.add_cog(ClearUser(bot))
+    bot.add_cog(ClearUser(bot))

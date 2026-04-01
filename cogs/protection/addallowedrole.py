@@ -41,4 +41,4 @@ class AddAllowedRole(commands.Cog):
         await send_and_delete(ctx, embed)
 
 async def setup(bot):
-    await bot.add_cog(AddAllowedRole(bot))
+    bot.add_cog(AddAllowedRole(bot))

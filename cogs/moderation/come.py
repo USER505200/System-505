@@ -99,4 +99,4 @@ class Come(commands.Cog):
             await requester.send(embed=embed)
 
 async def setup(bot):
-    await bot.add_cog(Come(bot))
+    bot.add_cog(Come(bot))
