@@ -69,4 +69,4 @@ class EZ(commands.Cog):
             await send_and_delete(ctx, error_embed("Cancelled", "Command cancelled. No confirmation received."))
 
 async def setup(bot):
-    bot.add_cog(EZ(bot))
+    await bot.add_cog(EZ(bot))

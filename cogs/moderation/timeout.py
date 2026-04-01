@@ -13,7 +13,6 @@ class Timeout(commands.Cog):
         self.bot = bot
     
     @commands.command(name="timeout", aliases=["to", "time", "x", "تايم"])
-    @commands.has_permissions(moderate_members=True)
     @check_permission("timeout")
     async def timeout(self, ctx, duration=None, *, user_input=None):
         """تقييد عضو - !timeout @user [duration] (30s, 10m, 1h, 1d)"""
@@ -100,7 +99,5 @@ class Timeout(commands.Cog):
         except Exception as e:
             await send_and_delete(ctx, error_embed("Error", f"Could not timeout user. Error: {str(e)}"))
 
-def setup(bot):
-    cog = Timeout(bot)
-    bot.add_cog(cog)
-    return cog
+async def setup(bot):
+    await bot.add_cog(Timeout(bot))

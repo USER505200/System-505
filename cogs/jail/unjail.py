@@ -16,7 +16,6 @@ class Unjail(commands.Cog):
         return discord.utils.get(guild.roles, name="Jailed")
     
     @commands.command(name="unjail", aliases=["uj", "فك_سجن"])
-    @commands.has_permissions(administrator=True)
     @check_permission("unjail")
     async def unjail(self, ctx, *, user_input=None):
         """فك السجن عن عضو - !unjail @user أو ريبلاي"""
@@ -66,4 +65,4 @@ class Unjail(commands.Cog):
             await send_and_delete(ctx, error_embed("Unjail Failed", f"Could not unjail {member.mention}. Error: {str(e)}"))
 
 async def setup(bot):
-    bot.add_cog(Unjail(bot))
+    await bot.add_cog(Unjail(bot))

@@ -97,7 +97,5 @@ class Warn(commands.Cog):
             except Exception as e:
                 print(f"Timeout failed: {e}")
 
-def setup(bot):
-    cog = Warn(bot)
-    bot.add_cog(cog)
-    return cog
+async def setup(bot):
+    await bot.add_cog(Warn(bot))

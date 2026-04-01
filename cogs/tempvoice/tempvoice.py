@@ -53,12 +53,12 @@ class TempVoice(commands.Cog):
         self.delete_tasks[voice_id] = task
     
     async def create_temp_voice(self, member, source_channel):
-        """إنشاء روم صوتي فقط (بدون روم نصي)"""
+        """إنشاء روم صوتي Public للمستخدم (الكل يقدر يدخل)"""
         
         category = source_channel.category
         voice_name = f"{member.display_name}"
         
-        # إنشاء الروم الصوتي فقط
+        # إنشاء الروم الصوتي
         voice_channel = await member.guild.create_voice_channel(
             name=voice_name,
             category=category,
@@ -66,9 +66,17 @@ class TempVoice(commands.Cog):
             reason=f"Temp voice for {member.display_name}"
         )
         
-        # صلاحيات الروم الصوتي
-        await voice_channel.set_permissions(member, connect=True, manage_channels=True)
-        await voice_channel.set_permissions(member.guild.default_role, connect=False)
+        # ========== الروم Public ==========
+        # @everyone يقدر يدخل (ما نغيرهاش)
+        # المالك عنده صلاحيات إضافية
+        await voice_channel.set_permissions(
+            member, 
+            connect=True, 
+            manage_channels=True, 
+            mute_members=True, 
+            deafen_members=True, 
+            move_members=True
+        )
         
         # حفظ البيانات
         self.active_channels[voice_channel.id] = {
@@ -76,7 +84,7 @@ class TempVoice(commands.Cog):
             "voice_name": voice_name
         }
         
-        # نقل العضو للروم الصوتي الجديد
+        # نقل العضو للروم الجديد
         try:
             await member.move_to(voice_channel)
         except:
@@ -490,4 +498,4 @@ class TempVoice(commands.Cog):
         await ctx.send(f"✅ Control panel sent to {channel.mention}", delete_after=5)
 
 async def setup(bot):
-    bot.add_cog(TempVoice(bot))
+    await bot.add_cog(TempVoice(bot))

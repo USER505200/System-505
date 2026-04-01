@@ -49,7 +49,6 @@ class Jail(commands.Cog):
         return jail_role
     
     @commands.command(name="jail", aliases=["j", "سجن"])
-    @commands.has_permissions(administrator=True)
     @check_permission("jail")
     async def jail(self, ctx, duration=None, *, user_input=None):
         """سجن عضو - !jail @user [duration] (30s, 10m, 1h, 1d)"""
@@ -147,4 +146,4 @@ class Jail(commands.Cog):
             pass
 
 async def setup(bot):
-    bot.add_cog(Jail(bot))
+    await bot.add_cog(Jail(bot))

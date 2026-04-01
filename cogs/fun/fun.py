@@ -172,4 +172,4 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
 async def setup(bot):
-    bot.add_cog(Fun(bot))
+    await bot.add_cog(Fun(bot))

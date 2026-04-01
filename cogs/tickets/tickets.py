@@ -358,4 +358,4 @@ class TicketSystem(commands.Cog):
                 break
 
 async def setup(bot):
-    bot.add_cog(TicketSystem(bot))
+    await bot.add_cog(TicketSystem(bot))

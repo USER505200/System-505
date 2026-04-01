@@ -113,4 +113,4 @@ class Lines(commands.Cog):
             print(f"✅ Sent image to {message.channel.name}")
 
 async def setup(bot):
-    bot.add_cog(Lines(bot))
+    await bot.add_cog(Lines(bot))

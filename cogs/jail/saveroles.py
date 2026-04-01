@@ -11,7 +11,6 @@ class SaveRoles(commands.Cog):
         self.bot = bot
     
     @commands.command(name="saveroles", aliases=["save", "حفظ"])
-    @commands.has_permissions(administrator=True)
     @check_permission("saveroles")
     async def saveroles(self, ctx, *, user_input=None):
         """حفظ رتب عضو يدوياً - !save @user أو ريبلاي"""
@@ -33,4 +32,4 @@ class SaveRoles(commands.Cog):
         await send_and_delete(ctx, embed)
 
 async def setup(bot):
-    bot.add_cog(SaveRoles(bot))
+    await bot.add_cog(SaveRoles(bot))

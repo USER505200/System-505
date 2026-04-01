@@ -63,4 +63,4 @@ class RemoveWarn(commands.Cog):
         ))
 
 async def setup(bot):
-    bot.add_cog(RemoveWarn(bot))
+    await bot.add_cog(RemoveWarn(bot))

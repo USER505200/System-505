@@ -11,7 +11,6 @@ class RestoreRoles(commands.Cog):
         self.bot = bot
     
     @commands.command(name="restoreroles", aliases=["restore", "استرجاع"])
-    @commands.has_permissions(administrator=True)
     @check_permission("restoreroles")
     async def restoreroles(self, ctx, *, user_input=None):
         """استرجاع رتب محفوظة لعضو - !restore @user أو ريبلاي"""
@@ -46,4 +45,4 @@ class RestoreRoles(commands.Cog):
             await send_and_delete(ctx, error_embed("Restore Failed", f"Could not restore roles. Error: {str(e)}"))
 
 async def setup(bot):
-    bot.add_cog(RestoreRoles(bot))
+    await bot.add_cog(RestoreRoles(bot))

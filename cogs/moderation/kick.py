@@ -1,19 +1,17 @@
 # cogs/moderation/kick.py
 import discord
 from discord.ext import commands
-from utils.helpers import get_member, delete_command, send_and_delete
+from utils.helpers import get_member, send_and_delete
 from utils.embeds import kick_embed, error_embed
+from utils.checks import check_permission
 
 class Kick(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
     @commands.command(name="kick", aliases=["k", "طرد"])
-    @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, *, user_input=None):
         """طرد عضو - !kick @user [reason] أو ريبلاي"""
-        
-        await delete_command(ctx.message)
         
         member = await get_member(ctx, user_input)
         if not member:
@@ -44,7 +42,5 @@ class Kick(commands.Cog):
         except:
             await send_and_delete(ctx, error_embed("Permission Error", "I don't have permission to kick that user."))
 
-def setup(bot):
-    cog = Kick(bot)
-    bot.add_cog(cog)
-    return cog
+async def setup(bot):
+    await bot.add_cog(Kick(bot))

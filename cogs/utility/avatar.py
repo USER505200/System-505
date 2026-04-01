@@ -31,4 +31,4 @@ class Avatar(commands.Cog):
         await send_permanent(ctx, embed)
 
 async def setup(bot):
-    bot.add_cog(Avatar(bot))
+    await bot.add_cog(Avatar(bot))

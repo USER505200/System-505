@@ -83,4 +83,4 @@ class HWIDBan(commands.Cog):
             await send_and_delete(ctx, error_embed("Ban Failed", f"Could not ban user. Error: {str(e)}"))
 
 async def setup(bot):
-    bot.add_cog(HWIDBan(bot))
+    await bot.add_cog(HWIDBan(bot))

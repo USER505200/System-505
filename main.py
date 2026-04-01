@@ -5,6 +5,7 @@ import asyncio
 import config
 import database as db
 import re
+from utils.checks import has_permission
 
 # ========== تعريف الـ Intents أولاً ==========
 intents = discord.Intents.default()
@@ -40,75 +41,105 @@ async def on_message(message):
             
             # ========== النيك نيم ==========
             if content_lower.startswith("n"):
-                cog = bot.get_cog("Nickname")
-                if cog:
-                    if len(content) > 1:
-                        new_name = content[1:].strip()
-                        await cog.nickname.callback(cog, ctx, user_input=new_name if new_name else None)
-                    else:
-                        await cog.nickname.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "nickname"):
+                    cog = bot.get_cog("Nickname")
+                    if cog:
+                        new_name = content[1:].strip() if len(content) > 1 else None
+                        await cog.nickname(ctx, user_input=new_name)
+                else:
+                    await message.reply("❌ You don't have permission to change nicknames!", delete_after=5)
             
             # ========== التحذير ==========
             elif content_lower in ["ت", "تحذير", "w"]:
-                cog = bot.get_cog("Warn")
-                if cog:
-                    await cog.warn.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "warn"):
+                    cog = bot.get_cog("Warn")
+                    if cog:
+                        await cog.warn(ctx, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to warn members!", delete_after=5)
             
             # ========== Timeout ==========
             elif content_lower in ["تايم", "to", "time"]:
-                cog = bot.get_cog("Timeout")
-                if cog:
-                    await cog.timeout.callback(cog, ctx, duration=None, user_input=None)
+                if await has_permission(ctx, "timeout"):
+                    cog = bot.get_cog("Timeout")
+                    if cog:
+                        await cog.timeout(ctx, duration=None, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to timeout members!", delete_after=5)
             
             elif content_lower.startswith("تايم "):
-                cog = bot.get_cog("Timeout")
-                if cog:
-                    duration = content[5:].strip()
-                    await cog.timeout.callback(cog, ctx, duration=duration, user_input=None)
+                if await has_permission(ctx, "timeout"):
+                    cog = bot.get_cog("Timeout")
+                    if cog:
+                        duration = content[5:].strip()
+                        await cog.timeout(ctx, duration=duration, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to timeout members!", delete_after=5)
             
             # ========== الكتم ==========
             elif content_lower in ["م", "كتم", "m"]:
-                cog = bot.get_cog("Mute")
-                if cog:
-                    await cog.mute.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "mute"):
+                    cog = bot.get_cog("Mute")
+                    if cog:
+                        await cog.mute(ctx, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to mute members!", delete_after=5)
             
             # ========== فك الكتم ==========
             elif content_lower in ["فك", "فك_كتم", "um"]:
-                cog = bot.get_cog("Unmute")
-                if cog:
-                    await cog.unmute.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "unmute"):
+                    cog = bot.get_cog("Unmute")
+                    if cog:
+                        await cog.unmute(ctx, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to unmute members!", delete_after=5)
             
             # ========== الطرد ==========
             elif content_lower in ["ط", "طرد", "k"]:
-                cog = bot.get_cog("Kick")
-                if cog:
-                    await cog.kick.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "kick"):
+                    cog = bot.get_cog("Kick")
+                    if cog:
+                        await cog.kick(ctx, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to kick members!", delete_after=5)
             
             # ========== الحظر ==========
             elif content_lower in ["ب", "حظر", "b"]:
-                cog = bot.get_cog("Ban")
-                if cog:
-                    await cog.ban.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "ban"):
+                    cog = bot.get_cog("Ban")
+                    if cog:
+                        await cog.ban(ctx, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to ban members!", delete_after=5)
             
             # ========== السجن ==========
             elif content_lower in ["س", "سجن", "j"]:
-                cog = bot.get_cog("Jail")
-                if cog:
-                    await cog.jail.callback(cog, ctx, duration=None, user_input=None)
+                if await has_permission(ctx, "jail"):
+                    cog = bot.get_cog("Jail")
+                    if cog:
+                        await cog.jail(ctx, duration=None, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to jail members!", delete_after=5)
             
             elif content_lower.startswith("سجن "):
-                cog = bot.get_cog("Jail")
-                if cog:
-                    parts = content[4:].strip().split(maxsplit=1)
-                    duration = parts[0] if parts else None
-                    user_input = parts[1] if len(parts) > 1 else None
-                    await cog.jail.callback(cog, ctx, duration=duration, user_input=user_input)
+                if await has_permission(ctx, "jail"):
+                    cog = bot.get_cog("Jail")
+                    if cog:
+                        parts = content[4:].strip().split(maxsplit=1)
+                        duration = parts[0] if parts else None
+                        user_input = parts[1] if len(parts) > 1 else None
+                        await cog.jail(ctx, duration=duration, user_input=user_input)
+                else:
+                    await message.reply("❌ You don't have permission to jail members!", delete_after=5)
             
             # ========== فك السجن ==========
             elif content_lower in ["فك_سجن", "uj"]:
-                cog = bot.get_cog("Unjail")
-                if cog:
-                    await cog.unjail.callback(cog, ctx, user_input=None)
+                if await has_permission(ctx, "unjail"):
+                    cog = bot.get_cog("Unjail")
+                    if cog:
+                        await cog.unjail(ctx, user_input=None)
+                else:
+                    await message.reply("❌ You don't have permission to unjail members!", delete_after=5)
             
         except Exception as e:
             print(f"Reply error: {e}")
@@ -122,7 +153,6 @@ async def on_ready():
     await db.init_db()
     print("💾 Database initialized")
     
-    # تحميل جميع الـ Cogs
     cogs_list = [
         "cogs.moderation.ban",
         "cogs.moderation.kick",
@@ -205,6 +235,22 @@ async def on_command_error(ctx, error):
         pass
     else:
         print(f"⚠️ Error: {error}")
+
+# ========== أمر اختبار الصلاحيات ==========
+@bot.command(name="checkperm")
+async def check_perm(ctx, command_name: str):
+    """اختبار الصلاحيات - !checkperm nickname"""
+    from utils.checks import has_permission
+    has_perm = await has_permission(ctx, command_name)
+    roles = [role.mention for role in ctx.author.roles]
+    await ctx.send(f"Command: `{command_name}`\nHas permission: `{has_perm}`\nYour roles: {', '.join(roles)}")
+
+# ========== أمر عرض الرتب ==========
+@bot.command(name="myroles")
+async def show_roles(ctx):
+    """عرض الرتب الخاصة بك مع IDs"""
+    roles = [f"{role.name} (`{role.id}`)" for role in ctx.author.roles if role.name != "@everyone"]
+    await ctx.send(f"Your roles:\n" + "\n".join(roles))
 
 if __name__ == "__main__":
     bot.run(config.TOKEN)

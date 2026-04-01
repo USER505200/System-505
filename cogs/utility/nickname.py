@@ -12,7 +12,6 @@ class Nickname(commands.Cog):
         self.bot = bot
     
     @commands.command(name="nickname", aliases=["nick", "n", "اسم"])
-    @commands.has_permissions(manage_nicknames=True)
     @check_permission("nickname")
     async def nickname(self, ctx, *, user_input=None):
         """تغيير النيك نيم - !nick @user [اسم] أو ريبلاي n اسم"""
@@ -93,4 +92,4 @@ class Nickname(commands.Cog):
             return None
 
 async def setup(bot):
-    bot.add_cog(Nickname(bot))
+    await bot.add_cog(Nickname(bot))

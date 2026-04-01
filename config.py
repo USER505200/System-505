@@ -39,28 +39,72 @@ COLORS = {
 
 DELETE_RESPONSE_DELAY = 10
 
+# ========== الصلاحيات ==========
+# رتبة الحظر والطرد (ID: 1485542654644060252)
+BAN_KICK_ROLE = "1485542654644060252"
+# رتبة الإدارة العادية (ID: 1485545453603913838)
+STAFF_ROLE = "1485545453603913838"
+
 COMMAND_PERMISSIONS = {
-    "ban": {"allowed_roles": ["admin_only"]}, "kick": {"allowed_roles": ["admin_only"]},
-    "mute": {"allowed_roles": ["admin_only"]}, "unmute": {"allowed_roles": ["admin_only"]},
-    "clear": {"allowed_roles": ["admin_only"]}, "clearuser": {"allowed_roles": ["admin_only"]},
-    "warn": {"allowed_roles": ["admin_only"]}, "checkwarn": {"allowed_roles": []},
-    "removewarn": {"allowed_roles": ["admin_only"]}, "resetwarn": {"allowed_roles": ["admin_only"]},
-    "jail": {"allowed_roles": ["admin_only"]}, "unjail": {"allowed_roles": ["admin_only"]},
-    "saveroles": {"allowed_roles": ["admin_only"]}, "restoreroles": {"allowed_roles": ["admin_only"]},
-    "lock": {"allowed_roles": ["admin_only"]}, "unlock": {"allowed_roles": ["admin_only"]},
-    "lockdown": {"allowed_roles": ["admin_only"]}, "unlockdown": {"allowed_roles": ["admin_only"]},
-    "block": {"allowed_roles": ["admin_only"]}, "unblock": {"allowed_roles": ["admin_only"]},
-    "addrole": {"allowed_roles": ["admin_only"]}, "removerole": {"allowed_roles": ["admin_only"]},
-    "addallowedrole": {"allowed_roles": ["admin_only"]}, "removeallowedrole": {"allowed_roles": ["admin_only"]},
-    "marry": {"allowed_roles": []}, "divorce": {"allowed_roles": []},
-    "goodnight": {"allowed_roles": []}, "ez": {"allowed_roles": ["admin_only"]},
-    "setgif": {"allowed_roles": ["admin_only"]}, "avatar": {"allowed_roles": []},
-    "banner": {"allowed_roles": []}, "userinfo": {"allowed_roles": []},
-    "serverinfo": {"allowed_roles": []}, "roleinfo": {"allowed_roles": []},
-    "botinfo": {"allowed_roles": []}, "nickname": {"allowed_roles": ["admin_only"]},
-    "help": {"allowed_roles": []}, "timeout": {"allowed_roles": ["admin_only"]},
-    "ipban": {"allowed_roles": ["admin_only"]}, "hwidban": {"allowed_roles": ["admin_only"]},
-    "unban": {"allowed_roles": ["admin_only"]},
+    # ========== أوامر الحظر والطرد - فقط رتبة معينة ==========
+    "ban": {"allowed_roles": [BAN_KICK_ROLE], "description": "حظر عضو"},
+    "kick": {"allowed_roles": [BAN_KICK_ROLE], "description": "طرد عضو"},
+    "ipban": {"allowed_roles": [BAN_KICK_ROLE], "description": "حظر IP"},
+    "hwidban": {"allowed_roles": [BAN_KICK_ROLE], "description": "حظر Hardware ID"},
+    "unban": {"allowed_roles": [BAN_KICK_ROLE], "description": "فك الحظر"},
+    
+    # ========== أوامر الإدارة - أدمن + رتبة STAFF_ROLE ==========
+    "mute": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "كتم عضو"},
+    "unmute": {"allowed_roles": ["admin_only"], "description": "فك الكتم"},
+    "clear": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "مسح الشات (حد أقصى 20 للرتبة)"},
+    "clearuser": {"allowed_roles": ["admin_only"], "description": "مسح رسائل شخص"},
+    "warn": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "إضافة تحذير"},
+    "checkwarn": {"allowed_roles": [], "description": "عرض التحذيرات"},
+    "removewarn": {"allowed_roles": ["admin_only"], "description": "حذف تحذير"},
+    "resetwarn": {"allowed_roles": ["admin_only"], "description": "مسح كل التحذيرات"},
+    "jail": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "سجن عضو"},
+    "unjail": {"allowed_roles": ["admin_only"], "description": "فك السجن"},
+    "saveroles": {"allowed_roles": ["admin_only"], "description": "حفظ الرتب"},
+    "restoreroles": {"allowed_roles": ["admin_only"], "description": "استرجاع الرتب"},
+    "nickname": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "تغيير النيك نيم"},
+    "timeout": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "تقييد عضو"},
+    
+    # ========== أوامر الحماية - أدمن فقط ==========
+    "lock": {"allowed_roles": ["admin_only"], "description": "قفل روم"},
+    "unlock": {"allowed_roles": ["admin_only"], "description": "فتح روم"},
+    "lockdown": {"allowed_roles": ["admin_only"], "description": "غلق السيرفر"},
+    "unlockdown": {"allowed_roles": ["admin_only"], "description": "فتح السيرفر"},
+    "block": {"allowed_roles": ["admin_only"], "description": "حظر من البوت"},
+    "unblock": {"allowed_roles": ["admin_only"], "description": "إلغاء حظر البوت"},
+    "addrole": {"allowed_roles": ["admin_only"], "description": "إضافة رتبة"},
+    "removerole": {"allowed_roles": ["admin_only"], "description": "إزالة رتبة"},
+    "addallowedrole": {"allowed_roles": ["admin_only"], "description": "إضافة رتبة مصرح بها"},
+    "removeallowedrole": {"allowed_roles": ["admin_only"], "description": "إزالة رتبة مصرح بها"},
+    
+    # ========== أوامر Temp Voice ==========
+    "temp": {"allowed_roles": ["admin_only"], "description": "أوامر نظام الصوت المؤقت"},
+    "panel": {"allowed_roles": ["admin_only"], "description": "إرسال لوحة التحكم"},
+    
+    # ========== أوامر التذاكر ==========
+    "ticket": {"allowed_roles": ["admin_only"], "description": "نظام التذاكر - !ticket setup, !ticket panel, !ticket logs, !ticket staff, !ticket category"},
+    
+    # ========== أوامر ترفيهية - الجميع ==========
+    "marry": {"allowed_roles": [], "description": "الارتباط"},
+    "divorce": {"allowed_roles": [], "description": "الطلاق"},
+    "goodnight": {"allowed_roles": [], "description": "تصبح على خير"},
+    "ez": {"allowed_roles": ["admin_only"], "description": "أمر ترول"},
+    "setgif": {"allowed_roles": ["admin_only"], "description": "تخصيص GIF"},
+    
+    # ========== أوامر المعلومات - الجميع ==========
+    "avatar": {"allowed_roles": [], "description": "عرض الصورة"},
+    "banner": {"allowed_roles": [], "description": "عرض البانر"},
+    "userinfo": {"allowed_roles": [], "description": "معلومات العضو"},
+    "serverinfo": {"allowed_roles": [], "description": "معلومات السيرفر"},
+    "roleinfo": {"allowed_roles": [], "description": "معلومات الرتبة"},
+    "botinfo": {"allowed_roles": [], "description": "معلومات البوت"},
+    "help": {"allowed_roles": [], "description": "قائمة المساعدة"},
+    
+    # ========== أوامر أخرى ==========
     "come": {"allowed_roles": ["admin_only"], "description": "إرسال دعوة لمستخدم مع رسالة مخصصة"},
     "line": {"allowed_roles": ["admin_only"], "description": "إضافة قناة لنظام Lines"},
     "lines": {"allowed_roles": ["admin_only"], "description": "عرض جميع قنوات Lines"},

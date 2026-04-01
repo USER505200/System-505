@@ -6,7 +6,7 @@ import re
 import config
 
 async def get_member(ctx, user_input=None):
-    """جلب العضو من منشن أو ريبلاي أو ID - محسنة"""
+    """جلب العضو من منشن أو ريبلاي أو ID"""
     
     # الحالة 1: ريبلاي
     if ctx.message.reference and not user_input:
@@ -53,3 +53,30 @@ async def send_and_delete(ctx, embed, delete_after=config.DELETE_RESPONSE_DELAY)
 async def send_permanent(ctx, embed):
     """إرسال رسالة دائمة"""
     return await ctx.send(embed=embed)
+
+async def send_warning(ctx, title: str, description: str = None):
+    """إرسال رسالة تحذير"""
+    embed = discord.Embed(
+        title=f"{config.EMOJIS['warning']} {title}",
+        description=description,
+        color=config.COLORS["warning"]
+    )
+    return await send_and_delete(ctx, embed)
+
+async def send_error(ctx, title: str, description: str = None):
+    """إرسال رسالة خطأ"""
+    embed = discord.Embed(
+        title=f"{config.EMOJIS['error']} {title}",
+        description=description,
+        color=config.COLORS["error"]
+    )
+    return await send_and_delete(ctx, embed)
+
+async def send_success(ctx, title: str, description: str = None):
+    """إرسال رسالة نجاح"""
+    embed = discord.Embed(
+        title=f"{config.EMOJIS['success']} {title}",
+        description=description,
+        color=config.COLORS["success"]
+    )
+    return await send_and_delete(ctx, embed)
