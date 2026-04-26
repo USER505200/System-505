@@ -2,6 +2,14 @@
 import aiosqlite
 from config import DB_PATH
 
+
+async def _ensure_column(conn, table: str, column: str, definition: str):
+    async with conn.execute(f"PRAGMA table_info({table})") as cursor:
+        rows = await cursor.fetchall()
+    columns = {row[1] for row in rows}
+    if column not in columns:
+        await conn.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
+
 async def init_db():
     """تهيئة قاعدة البيانات"""
     async with aiosqlite.connect(DB_PATH) as db:
@@ -96,10 +104,45 @@ async def init_db():
                 guild_id TEXT PRIMARY KEY,
                 category_id TEXT,
                 logs_channel_id TEXT,
-                staff_role_id TEXT
+                staff_role_id TEXT,
+                rating_channel_id TEXT,
+                ai_admin_role_id TEXT,
+                ai_owner_role_id TEXT,
+                archive_category_id TEXT
             )
         ''')
         
+        # جدول إعدادات أنواع التذاكر
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS ticket_type_settings (
+                guild_id TEXT NOT NULL,
+                ticket_type TEXT NOT NULL,
+                category_id TEXT,
+                ai_delay_seconds INTEGER,
+                PRIMARY KEY (guild_id, ticket_type)
+            )
+        """)
+
+        # جدول التذاكر المفتوحة حتى لا تضيع بعد إعادة تشغيل البوت
+        await db.execute("""
+            CREATE TABLE IF NOT EXISTS active_tickets (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                guild_id TEXT NOT NULL,
+                channel_id TEXT NOT NULL,
+                user_id TEXT NOT NULL,
+                ticket_type TEXT NOT NULL,
+                staff_id TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                ticket_message_id TEXT,
+                ai_enabled INTEGER DEFAULT 0,
+                ai_active INTEGER DEFAULT 0,
+                ai_busy INTEGER DEFAULT 0,
+                ai_delay_seconds INTEGER,
+                ai_set_at TIMESTAMP,
+                closed INTEGER DEFAULT 0
+            )
+        """)
+
         # ========== جدول Lines Channels ==========
         await db.execute('''
             CREATE TABLE IF NOT EXISTS lines_channels (
@@ -110,6 +153,20 @@ async def init_db():
             )
         ''')
         
+
+        # Migrations for existing databases.
+        await _ensure_column(db, "ticket_settings", "rating_channel_id", "TEXT")
+        await _ensure_column(db, "ticket_settings", "ai_admin_role_id", "TEXT")
+        await _ensure_column(db, "ticket_settings", "ai_owner_role_id", "TEXT")
+        await _ensure_column(db, "ticket_settings", "archive_category_id", "TEXT")
+        await _ensure_column(db, "ticket_type_settings", "ai_delay_seconds", "INTEGER")
+        await _ensure_column(db, "active_tickets", "ticket_message_id", "TEXT")
+        await _ensure_column(db, "active_tickets", "ai_enabled", "INTEGER DEFAULT 0")
+        await _ensure_column(db, "active_tickets", "ai_active", "INTEGER DEFAULT 0")
+        await _ensure_column(db, "active_tickets", "ai_busy", "INTEGER DEFAULT 0")
+        await _ensure_column(db, "active_tickets", "ai_delay_seconds", "INTEGER")
+        await _ensure_column(db, "active_tickets", "ai_set_at", "TIMESTAMP")
+        await _ensure_column(db, "active_tickets", "closed", "INTEGER DEFAULT 0")
         await db.commit()
 
 # ========== دوال التحذيرات ==========
@@ -333,32 +390,53 @@ async def get_temp_voice_channel(guild_id: int):
 # ========== دوال التذاكر ==========
 
 async def set_ticket_category(guild_id: int, category_id: int):
-    """تعيين كاتيجوري التذاكر"""
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute('''
-            INSERT OR REPLACE INTO ticket_settings (guild_id, category_id)
+            INSERT INTO ticket_settings (guild_id, category_id)
             VALUES (?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET category_id = excluded.category_id
         ''', (str(guild_id), str(category_id)))
         await db.commit()
 
 async def set_ticket_logs(guild_id: int, channel_id: int):
-    """تعيين روم اللوجات"""
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute('''
-            UPDATE ticket_settings SET logs_channel_id = ? WHERE guild_id = ?
-        ''', (str(channel_id), str(guild_id)))
+            INSERT INTO ticket_settings (guild_id, logs_channel_id)
+            VALUES (?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET logs_channel_id = excluded.logs_channel_id
+        ''', (str(guild_id), str(channel_id)))
         await db.commit()
 
 async def set_ticket_staff_role(guild_id: int, role_id: int):
-    """تعيين رتبة الإدارة"""
     async with aiosqlite.connect(DB_PATH) as db:
         await db.execute('''
-            UPDATE ticket_settings SET staff_role_id = ? WHERE guild_id = ?
-        ''', (str(role_id), str(guild_id)))
+            INSERT INTO ticket_settings (guild_id, staff_role_id)
+            VALUES (?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET staff_role_id = excluded.staff_role_id
+        ''', (str(guild_id), str(role_id)))
+        await db.commit()
+
+async def set_ticket_rating_channel(guild_id: int, channel_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT INTO ticket_settings (guild_id, rating_channel_id)
+            VALUES (?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET rating_channel_id = excluded.rating_channel_id
+        ''', (str(guild_id), str(channel_id)))
+        await db.commit()
+
+async def set_ticket_ai_roles(guild_id: int, admin_role_id: int = None, owner_role_id: int = None):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT INTO ticket_settings (guild_id, ai_admin_role_id, ai_owner_role_id)
+            VALUES (?, ?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET
+                ai_admin_role_id = COALESCE(excluded.ai_admin_role_id, ticket_settings.ai_admin_role_id),
+                ai_owner_role_id = COALESCE(excluded.ai_owner_role_id, ticket_settings.ai_owner_role_id)
+        ''', (str(guild_id), str(admin_role_id) if admin_role_id else None, str(owner_role_id) if owner_role_id else None))
         await db.commit()
 
 async def get_ticket_category(guild_id: int):
-    """جلب كاتيجوري التذاكر"""
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute('''
             SELECT category_id FROM ticket_settings WHERE guild_id = ?
@@ -367,7 +445,6 @@ async def get_ticket_category(guild_id: int):
             return result[0] if result else None
 
 async def get_ticket_logs(guild_id: int):
-    """جلب روم اللوجات"""
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute('''
             SELECT logs_channel_id FROM ticket_settings WHERE guild_id = ?
@@ -376,10 +453,42 @@ async def get_ticket_logs(guild_id: int):
             return result[0] if result else None
 
 async def get_ticket_staff_role(guild_id: int):
-    """جلب رتبة الإدارة"""
     async with aiosqlite.connect(DB_PATH) as db:
         async with db.execute('''
             SELECT staff_role_id FROM ticket_settings WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+
+async def get_ticket_rating_channel(guild_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT rating_channel_id FROM ticket_settings WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            result = await cursor.fetchone()
+            return result[0] if result else None
+
+async def get_ticket_ai_roles(guild_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT ai_admin_role_id, ai_owner_role_id FROM ticket_settings WHERE guild_id = ?
+        ''', (str(guild_id),)) as cursor:
+            result = await cursor.fetchone()
+            return result if result else (None, None)
+
+async def set_ticket_archive_category(guild_id: int, category_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT INTO ticket_settings (guild_id, archive_category_id)
+            VALUES (?, ?)
+            ON CONFLICT(guild_id) DO UPDATE SET archive_category_id = excluded.archive_category_id
+        ''', (str(guild_id), str(category_id)))
+        await db.commit()
+
+async def get_ticket_archive_category(guild_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT archive_category_id FROM ticket_settings WHERE guild_id = ?
         ''', (str(guild_id),)) as cursor:
             result = await cursor.fetchone()
             return result[0] if result else None
@@ -417,4 +526,170 @@ async def clear_line_channels(guild_id: int):
         await db.execute('''
             DELETE FROM lines_channels WHERE guild_id = ?
         ''', (str(guild_id),))
+        await db.commit()
+
+# ========== دوال التذاكر الجديدة متعددة الأنواع ==========
+
+async def set_ticket_type_category(guild_id: int, ticket_type: str, category_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT INTO ticket_type_settings (guild_id, ticket_type, category_id)
+            VALUES (?, ?, ?)
+            ON CONFLICT(guild_id, ticket_type) DO UPDATE SET category_id = excluded.category_id
+        ''', (str(guild_id), ticket_type, str(category_id)))
+        await db.commit()
+
+async def get_ticket_type_category(guild_id: int, ticket_type: str):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT category_id FROM ticket_type_settings WHERE guild_id = ? AND ticket_type = ?
+        ''', (str(guild_id), ticket_type)) as cursor:
+            result = await cursor.fetchone()
+            if result and result[0]:
+                return result[0]
+    return await get_ticket_category(guild_id)
+
+async def set_ticket_type_ai_delay(guild_id: int, ticket_type: str, seconds):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            INSERT INTO ticket_type_settings (guild_id, ticket_type, ai_delay_seconds)
+            VALUES (?, ?, ?)
+            ON CONFLICT(guild_id, ticket_type) DO UPDATE SET ai_delay_seconds = excluded.ai_delay_seconds
+        ''', (str(guild_id), ticket_type, int(seconds) if seconds is not None else None))
+        await db.commit()
+
+async def get_ticket_type_ai_delay(guild_id: int, ticket_type: str):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT ai_delay_seconds FROM ticket_type_settings WHERE guild_id = ? AND ticket_type = ?
+        ''', (str(guild_id), ticket_type)) as cursor:
+            result = await cursor.fetchone()
+            return int(result[0]) if result and result[0] else None
+
+async def create_active_ticket(guild_id: int, channel_id: int, user_id: int, ticket_type: str):
+    async with aiosqlite.connect(DB_PATH) as db:
+        cursor = await db.execute('''
+            INSERT INTO active_tickets (guild_id, channel_id, user_id, ticket_type)
+            VALUES (?, ?, ?, ?)
+        ''', (str(guild_id), str(channel_id), str(user_id), ticket_type))
+        await db.commit()
+        return cursor.lastrowid
+
+async def get_active_ticket_by_user(guild_id: int, user_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT id, channel_id, user_id, ticket_type, staff_id, created_at
+            FROM active_tickets WHERE guild_id = ? AND user_id = ? AND COALESCE(closed, 0) = 0
+            ORDER BY id DESC LIMIT 1
+        ''', (str(guild_id), str(user_id))) as cursor:
+            return await cursor.fetchone()
+
+async def get_active_ticket_by_user_kind(guild_id: int, user_id: int, ticket_types: list):
+    if not ticket_types:
+        return None
+    placeholders = ','.join(['?'] * len(ticket_types))
+    params = [str(guild_id), str(user_id)] + list(ticket_types)
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute(f'''
+            SELECT id, channel_id, user_id, ticket_type, staff_id, created_at
+            FROM active_tickets
+            WHERE guild_id = ? AND user_id = ? AND ticket_type IN ({placeholders}) AND COALESCE(closed, 0) = 0
+            ORDER BY id DESC LIMIT 1
+        ''', params) as cursor:
+            return await cursor.fetchone()
+
+async def get_active_ticket_by_channel(guild_id: int, channel_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT id, guild_id, channel_id, user_id, ticket_type, staff_id, created_at,
+                   ticket_message_id, ai_enabled, ai_active, ai_busy, ai_delay_seconds, ai_set_at, closed
+            FROM active_tickets WHERE guild_id = ? AND channel_id = ?
+            ORDER BY id DESC LIMIT 1
+        ''', (str(guild_id), str(channel_id))) as cursor:
+            return await cursor.fetchone()
+
+async def get_active_ticket(ticket_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT id, guild_id, channel_id, user_id, ticket_type, staff_id, created_at,
+                   ticket_message_id, ai_enabled, ai_active, ai_busy, ai_delay_seconds, ai_set_at, closed
+            FROM active_tickets WHERE id = ?
+        ''', (int(ticket_id),)) as cursor:
+            return await cursor.fetchone()
+
+async def set_active_ticket_staff(ticket_id: int, staff_id):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets SET staff_id = ?, ai_active = 0, ai_busy = 0 WHERE id = ?
+        ''', (str(staff_id) if staff_id is not None else None, int(ticket_id)))
+        await db.commit()
+
+async def set_active_ticket_message(ticket_id: int, message_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets SET ticket_message_id = ? WHERE id = ?
+        ''', (str(message_id), int(ticket_id)))
+        await db.commit()
+
+async def set_ticket_ai_delay(ticket_id: int, seconds: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets
+            SET ai_enabled = 1, ai_delay_seconds = ?, ai_set_at = CURRENT_TIMESTAMP, ai_active = 0, ai_busy = 0
+            WHERE id = ?
+        ''', (int(seconds), int(ticket_id)))
+        await db.commit()
+
+async def disable_ticket_ai(ticket_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets
+            SET ai_enabled = 0, ai_active = 0, ai_busy = 0
+            WHERE id = ?
+        ''', (int(ticket_id),))
+        await db.commit()
+
+async def set_ticket_ai_active(ticket_id: int, active: bool):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets SET ai_enabled = 1, ai_active = ?, ai_busy = 0 WHERE id = ?
+        ''', (1 if active else 0, int(ticket_id)))
+        await db.commit()
+
+async def set_ticket_ai_busy(ticket_id: int, busy: bool):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets SET ai_busy = ? WHERE id = ?
+        ''', (1 if busy else 0, int(ticket_id)))
+        await db.commit()
+
+async def get_ai_pending_tickets():
+    async with aiosqlite.connect(DB_PATH) as db:
+        async with db.execute('''
+            SELECT id, guild_id, channel_id, user_id, ticket_type, staff_id, created_at,
+                   ticket_message_id, ai_enabled, ai_active, ai_busy, ai_delay_seconds, ai_set_at, closed
+            FROM active_tickets
+            WHERE ai_enabled = 1 AND ai_active = 0 AND (staff_id IS NULL OR staff_id = '') AND COALESCE(closed, 0) = 0
+        ''') as cursor:
+            return await cursor.fetchall()
+
+async def set_active_ticket_closed(ticket_id: int, closed: bool):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            UPDATE active_tickets
+            SET closed = ?, ai_enabled = 0, ai_active = 0, ai_busy = 0
+            WHERE id = ?
+        ''', (1 if closed else 0, int(ticket_id)))
+        await db.commit()
+
+async def delete_active_ticket(ticket_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('DELETE FROM active_tickets WHERE id = ?', (int(ticket_id),))
+        await db.commit()
+
+async def delete_active_ticket_by_channel(guild_id: int, channel_id: int):
+    async with aiosqlite.connect(DB_PATH) as db:
+        await db.execute('''
+            DELETE FROM active_tickets WHERE guild_id = ? AND channel_id = ?
+        ''', (str(guild_id), str(channel_id)))
         await db.commit()

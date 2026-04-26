@@ -3,13 +3,14 @@ import discord
 from discord.ext import commands
 from utils.helpers import get_member, delete_command, send_and_delete
 from utils.embeds import punishment_embed, error_embed
+from utils.checks import check_permission
 
 class Mute(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
     @commands.command(name="mute", aliases=["m", "كتم"])
-    @commands.has_permissions(manage_roles=True)
+    @check_permission("mute")
     async def mute(self, ctx, *, user_input=None):
         """كتم عضو - !mute @user [reason] أو ريبلاي"""
         

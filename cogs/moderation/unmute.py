@@ -28,7 +28,6 @@ class Unmute(commands.Cog):
         return None
     
     @commands.command(name="unmute", aliases=["um", "فك_كتم"])
-    @commands.has_permissions(manage_roles=True)
     @check_permission("unmute")
     async def unmute(self, ctx, *, user_input=None):
         member = await self.get_member(ctx, user_input)

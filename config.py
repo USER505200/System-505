@@ -7,6 +7,15 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 PREFIX = "!"
 DB_PATH = "bot.db"
 
+# ========== AI / OpenRouter ==========
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemini-2.5-flash")
+OPENROUTER_BASE_URL = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1/chat/completions")
+OPENROUTER_SITE_URL = os.getenv("OPENROUTER_SITE_URL", "https://discord.com")
+OPENROUTER_SITE_NAME = os.getenv("OPENROUTER_SITE_NAME", "Drive 505 Ticket AI")
+AI_RESPONSE_MAX_CHARS = int(os.getenv("AI_RESPONSE_MAX_CHARS", "700"))
+AI_HISTORY_LIMIT = int(os.getenv("AI_HISTORY_LIMIT", "18"))
+
 EMOJIS = {
     "success": "<:80012verified:1485901284719460403>",
     "error": "<:6426error:1485901393075376179>",
@@ -43,7 +52,7 @@ DELETE_RESPONSE_DELAY = 10
 # رتبة الحظر والطرد (ID: 1485542654644060252)
 BAN_KICK_ROLE = "1485542654644060252"
 # رتبة الإدارة العادية (ID: 1485545453603913838)
-STAFF_ROLE = "1485545453603913838"
+STAFF_ROLE = "1485545225802875002"
 
 COMMAND_PERMISSIONS = {
     # ========== أوامر الحظر والطرد - فقط رتبة معينة ==========
@@ -55,17 +64,17 @@ COMMAND_PERMISSIONS = {
     
     # ========== أوامر الإدارة - أدمن + رتبة STAFF_ROLE ==========
     "mute": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "كتم عضو"},
-    "unmute": {"allowed_roles": ["admin_only"], "description": "فك الكتم"},
+    "unmute": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "فك الكتم"},
     "clear": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "مسح الشات (حد أقصى 20 للرتبة)"},
-    "clearuser": {"allowed_roles": ["admin_only"], "description": "مسح رسائل شخص"},
+    "clearuser": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "مسح رسائل شخص"},
     "warn": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "إضافة تحذير"},
     "checkwarn": {"allowed_roles": [], "description": "عرض التحذيرات"},
-    "removewarn": {"allowed_roles": ["admin_only"], "description": "حذف تحذير"},
-    "resetwarn": {"allowed_roles": ["admin_only"], "description": "مسح كل التحذيرات"},
+    "removewarn": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "حذف تحذير"},
+    "resetwarn": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "مسح كل التحذيرات"},
     "jail": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "سجن عضو"},
-    "unjail": {"allowed_roles": ["admin_only"], "description": "فك السجن"},
-    "saveroles": {"allowed_roles": ["admin_only"], "description": "حفظ الرتب"},
-    "restoreroles": {"allowed_roles": ["admin_only"], "description": "استرجاع الرتب"},
+    "unjail": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "فك السجن"},
+    "saveroles": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "حفظ الرتب"},
+    "restoreroles": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "استرجاع الرتب"},
     "nickname": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "تغيير النيك نيم"},
     "timeout": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "تقييد عضو"},
     
@@ -86,7 +95,9 @@ COMMAND_PERMISSIONS = {
     "panel": {"allowed_roles": ["admin_only"], "description": "إرسال لوحة التحكم"},
     
     # ========== أوامر التذاكر ==========
-    "ticket": {"allowed_roles": ["admin_only"], "description": "نظام التذاكر - !ticket setup, !ticket panel, !ticket logs, !ticket staff, !ticket category"},
+    "ticket": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "نظام التذاكر - setup/panel/logs/staff/category/archive/ratings/airoles"},
+    "ai-time": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "تفعيل AI مؤقت للتكت"},
+    "set-ai": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "ضبط AI تلقائي لكل نوع تكت"},
     
     # ========== أوامر ترفيهية - الجميع ==========
     "marry": {"allowed_roles": [], "description": "الارتباط"},
@@ -105,7 +116,7 @@ COMMAND_PERMISSIONS = {
     "help": {"allowed_roles": [], "description": "قائمة المساعدة"},
     
     # ========== أوامر أخرى ==========
-    "come": {"allowed_roles": ["admin_only"], "description": "إرسال دعوة لمستخدم مع رسالة مخصصة"},
+    "come": {"allowed_roles": ["admin_only", STAFF_ROLE], "description": "إرسال دعوة لمستخدم مع رسالة مخصصة"},
     "line": {"allowed_roles": ["admin_only"], "description": "إضافة قناة لنظام Lines"},
     "lines": {"allowed_roles": ["admin_only"], "description": "عرض جميع قنوات Lines"},
     "removeline": {"allowed_roles": ["admin_only"], "description": "إزالة قناة من نظام Lines"},

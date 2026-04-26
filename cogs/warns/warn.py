@@ -13,7 +13,6 @@ class Warn(commands.Cog):
         self.bot = bot
     
     @commands.command(name="warn", aliases=["w", "تحذير", "ت"])
-    @commands.has_permissions(kick_members=True)
     @check_permission("warn")
     async def warn(self, ctx, *, user_input=None):
         """إضافة تحذير - !warn @user [reason]"""

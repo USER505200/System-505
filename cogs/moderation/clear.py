@@ -10,7 +10,6 @@ class Clear(commands.Cog):
         self.bot = bot
     
     @commands.command(name="clear", aliases=["c", "مسح"])
-    @commands.has_permissions(manage_messages=True)
     @check_permission("clear")
     async def clear(self, ctx, amount: int = 5):
         """مسح رسائل - !clear 10"""

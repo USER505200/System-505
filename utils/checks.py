@@ -18,17 +18,16 @@ async def has_permission(ctx, command_name: str):
     if not permissions:
         return True
     
-    # 4. لو الأمر للأدمن فقط
-    if "admin_only" in permissions:
-        return False
-    
-    # 5. التحقق من الرتب
+    # 4. التحقق من الرتب المحددة حتى لو الأمر يحتوي admin_only
+    # admin_only تعني أن Administrator مسموح له، لكنها لا تمنع الرتب المحددة بجانبها.
     user_role_ids = [str(role.id) for role in ctx.author.roles]
-    
+
     for allowed_role in permissions:
+        if allowed_role == "admin_only":
+            continue
         if allowed_role in user_role_ids:
             return True
-    
+
     return False
 
 def check_permission(command_name: str):

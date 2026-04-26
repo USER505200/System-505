@@ -14,7 +14,7 @@ intents.message_content = True
 intents.voice_states = True
 
 # ========== تعريف البوت ==========
-bot = commands.Bot(command_prefix=config.PREFIX, intents=intents)
+bot = commands.Bot(command_prefix=config.PREFIX, intents=intents, case_insensitive=True)
 
 # ========== نظام الريبلاي بدون بريفكس ==========
 @bot.event

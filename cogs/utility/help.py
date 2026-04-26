@@ -67,7 +67,7 @@ class Help(commands.Cog):
             ("🔨 Advanced Ban", ["ban/b/حظر", "ipban/banip/حظر_ايبي", "hwidban/banhwid/حظر_هردوير", "unban/ub/فك_حظر"]),
             ("📡 Lines System", ["line #channel", "lines", "removeline #channel", "clearlines"]),
             ("🎙️ Temp Voice", ["temp set <channel>", "temp remove", "temp info", "panel #channel"]),
-            ("🎫 Tickets", ["ticket setup", "ticket panel #channel", "ticket logs #channel", "ticket staff @role", "ticket category <id>"]),
+            ("🎫 Tickets", ["ticket setup normal/order/help", "ticket panel normal/order/help #channel", "ticket category normal/order/help <id>", "ticket archive <category_id>", "ticket logs #channel", "ticket ratings #channel", "ticket staff @role", "ticket airoles @admin @owner", "set-ai order/normal/help <time>", "Ai start / Ai stop"]),
             ("🔔 Come", ["come @user <message>", "تعال @user <message>"]),
             ("💍 Marriage", ["marry/ارتبط", "divorce/طلاق"]),
             ("🎭 Fun", ["goodnight/gn/تصبح_على_خير", "ez/ارزع", "setgif/تعيين_جيف"]),
@@ -78,7 +78,7 @@ class Help(commands.Cog):
         for category, cmds in commands_list:
             embed.add_field(
                 name=category,
-                value="\n".join([f"`!{c}`" for c in cmds]),
+                value="\n".join([f"`{c}`" if c.startswith("Ai ") else f"`!{c}`" for c in cmds]),
                 inline=False
             )
         
@@ -123,15 +123,24 @@ class Help(commands.Cog):
         embed.add_field(
             name="🎫 Ticket System",
             value="**الإعداد:**\n"
-                  "1. `!ticket setup` - إعداد النظام\n"
-                  "2. `!ticket staff @role` - تعيين رتبة الإدارة\n"
-                  "3. `!ticket logs #channel` - تعيين روم اللوجات\n"
-                  "4. `!ticket category <id>` - تعيين كاتيجوري\n"
-                  "5. `!ticket panel #channel` - إرسال لوحة التذاكر\n\n"
+                  "1. `!ticket setup normal/order/help` - إعداد كاتيجوري لكل نوع\n"
+                  "2. `!ticket panel normal/order/help #channel` - إرسال بانل لكل نوع\n"
+                  "3. `!ticket category normal/order/help CATEGORY_ID` - تغيير كاتيجوري نوع معين\n"
+                  "4. `!ticket archive CATEGORY_ID` - كاتيجوري التكتات المقفولة\n"
+                  "5. `!ticket staff @role` - تعيين رتبة الإدارة للتكت\n"
+                  "6. `!ticket logs #channel` - تعيين روم اللوجات\n"
+                  "7. `!ticket ratings #channel` - تعيين روم التقييمات\n"
+                  "8. `!ticket airoles @admin @owner` - رتب يذكرها AI وقت الأسعار والشراء\n"
+                  "9. `!set-ai order 1m` - AI تلقائي لتكت Order\n"
+                  "10. `!set-ai normal 2m` - AI تلقائي لتكت Normal\n"
+                  "11. `!set-ai help 1m` - AI تلقائي لتكت Help\n"
+                  "12. داخل التكت: `Ai start` و `Ai stop` بدون prefix\n\n"
                   "**المميزات:**\n"
-                  "• 6 أنواع تذاكر\n"
-                  "• أزرار Accept, Close, Invite\n"
-                  "• Transcript وتقييم بعد الإغلاق",
+                  "• Normal / Order / Help مستقلين\n"
+                  "• Claim / Change Staff Select / Close / Invite\n"
+                  "• Archive + Open/Delete buttons بعد القفل\n"
+                  "• HTML Transcript فيه كلام AI والصور/المرفقات\n"
+                  "• Logs + Rating + AI Support",
             inline=False
         )
         
@@ -145,7 +154,7 @@ class Help(commands.Cog):
             inline=False
         )
         
-        embed.set_footer(text="Type !help <command> for more details | Prefix: !")
+        embed.set_footer(text="Type !help <command> for details | Prefix: ! | New: !set-ai order/normal/help")
         await send_permanent(ctx, embed)
 
 async def setup(bot):

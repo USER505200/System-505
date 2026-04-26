@@ -11,7 +11,6 @@ class ClearUser(commands.Cog):
         self.bot = bot
     
     @commands.command(name="clearuser", aliases=["cu", "مسح_شخص"])
-    @commands.has_permissions(manage_messages=True)
     @check_permission("clearuser")
     async def clearuser(self, ctx, amount: int = 50, *, user_input=None):
         """مسح رسائل شخص - !clearuser 20 @user أو ريبلاي"""

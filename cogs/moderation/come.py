@@ -12,7 +12,6 @@ class Come(commands.Cog):
         self.bot = bot
     
     @commands.command(name="come", aliases=["تعال", "جيب"])
-    @commands.has_permissions(kick_members=True)
     @check_permission("come")
     async def come(self, ctx, *, user_input=None):
         """
